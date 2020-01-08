@@ -42,5 +42,6 @@ BigInteger::BigInteger(string number)
         buffer=0;
         }
         this->Number[count++]=1;
+    }
 }
 
