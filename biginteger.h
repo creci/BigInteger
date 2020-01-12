@@ -10,23 +10,26 @@ public:
     bool Number[size];
     bool Sign;
     BigInteger();
-    BigInteger(std::string number);
+    BigInteger(const std::string number);
     void NullNumber();
     unsigned int SizeNumber();
     void PrintBinary();
+    void Reverse();
+    void Increment();
 
+    BigInteger& operator= (const BigInteger& right);
     //Unary +
-    friend const BigInteger& operator+(const BigInteger& i);
+    friend const BigInteger& operator+(const BigInteger& number);
     //Unary -
-    friend const BigInteger operator-(const BigInteger& i);
+    friend const BigInteger operator-(const BigInteger& number);
     //Prefix increment
-    friend const BigInteger& operator++(const BigInteger& i);
+    friend const BigInteger& operator++( BigInteger& number);
     //Postfix increment
-    friend const BigInteger operator++(const BigInteger& i,int);
+    friend const BigInteger operator++( BigInteger& number,int);
     //Prefix decrement
-    friend const BigInteger& operator--(const BigInteger& i);
+    friend const BigInteger& operator--( BigInteger& number);
     //Postfix decrement
-    friend const BigInteger operator--(const BigInteger& i,int);
+    friend const BigInteger operator--( BigInteger& number,int);
 
     //Binary +
     friend const BigInteger operator+ (const BigInteger& left,const BigInteger& right);

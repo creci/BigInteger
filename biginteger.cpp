@@ -11,6 +11,30 @@ void BigInteger::NullNumber(){
     for(unsigned int i=0;i<this->size;i++)
         this->Number[i]=0;
 }
+void BigInteger::Reverse(){
+    for(unsigned int i=0;i<this->size;i++)
+        this->Number[i]=!(this->Number[i]);
+}
+
+BigInteger& BigInteger::operator=(const BigInteger& right){
+        if(this==&right) {
+            return *this;
+        }
+        for(unsigned int i=0;i<right.size;i++)
+            Number[i]=right.Number[i];
+        Sign=right.Sign;
+        return *this;
+}
+
+void BigInteger::Increment(){
+    bool p=1;
+    bool buffer=0;
+    for(unsigned int i=0;i<this->size-1 && p;i++){
+        buffer=this->Number[i]^0;
+        this->Number[i]=buffer^p;
+        p=(p&buffer)|(this->Number[i]&0);
+    }
+}
 unsigned int BigInteger::SizeNumber(){
     unsigned int i=this->size-1;
     for(;this->Number[i]!=1&&i!=0;i--);
@@ -30,39 +54,70 @@ void BigInteger::PrintBinary(){
     cout<<this->Number[i];
     cout<<endl;
 }
+//Binary +
 const BigInteger operator+ (const BigInteger& left,const BigInteger& right){
     bool p=0;
     bool buffer=0;
     BigInteger result;
     for(unsigned int i=0;i<result.size-1;i++){
-        //cout<<left.Number[i]<<"^"<<right.Number[i]<<endl;
         buffer=left.Number[i]^right.Number[i];
         result.Number[i]=buffer^p;
         p=(p&buffer)|(left.Number[i]&right.Number[i]);
-        cout<<left.Number[i]<<"+"<<right.Number[i]<<"="<<result.Number[i]<<endl;
     }
     buffer=left.Sign^right.Sign;
     result.Sign=buffer^p;
-    p=(p&buffer)|(left.Sign&right.Sign);
-    cout<<"Знак:";
-    cout<<left.Sign<<"+"<<right.Sign<<"="<<result.Sign<<endl;
-    result.PrintBinary();
+   // p=(p&buffer)|(left.Sign&right.Sign);
     return result;
 }
-BigInteger::BigInteger(string number)
+//Prefix increment
+const BigInteger& operator++( BigInteger& number){
+    number++;
+    return number;
+}
+//Postfix increment
+const BigInteger operator++( BigInteger& number,int){
+    bool p=1;
+    bool buffer=0;
+    BigInteger result=number;
+    for(unsigned int i=0;i<result.size-1 && p;i++){
+        buffer=number.Number[i]^0;
+        number.Number[i]=buffer^p;
+        p=(p&buffer)|(number.Number[i]&0);
+    }
+    buffer=number.Sign^0;
+    number.Sign=buffer^p;
+   // p=(p&buffer)|(number.Sign&0);
+    return result;
+}
+//Unary +
+const BigInteger& operator+(const BigInteger& number){
+    return number;
+}
+//Unary -
+const BigInteger operator-(const BigInteger& number){
+    BigInteger result=number;
+    result.Sign=!(result.Sign);
+    result.Reverse();
+    result.Increment();
+    return  result;
+}
+BigInteger::BigInteger(const string number)
 {
+    string temp1(number);
     BigInteger::NullNumber();
-
-    if(number.length()==0){
+    while(temp1[0]=='0')
+        temp1=temp1.substr(1);
+    if(temp1.length()==0){
         this->Sign=false;
+        return;
     }else{
         if (number[0]=='-'){
-            number=number.substr(1);
+            temp1=temp1.substr(1);
             this->Sign=true;
         }else{
             this->Sign=false;
         }
-        string temp1(number),temp2;
+        string temp2;
         stack<bool> TempNumber;
         int buffer=0;
         unsigned int i=0,count=0;
@@ -82,6 +137,10 @@ BigInteger::BigInteger(string number)
         buffer=0;
         }
         if(temp1[count]!='0')this->Number[count++]=1;
+        if(this->Sign ){
+            this->Reverse();
+            this->Increment();
+        }
     }
 }
 
